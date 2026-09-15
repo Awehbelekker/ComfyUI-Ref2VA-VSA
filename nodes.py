@@ -250,6 +250,8 @@ def _vsa_attention(attn, x, rope_freqs, transformer_options, state: _VSAState):
         k = attn.k_norm(k.view(sp, attn.heads, attn.head_dim)).unsqueeze(0)
 
     gate_t = attn.to_gate_compress(x_t).view(1, sp, attn.heads, attn.head_dim)
+    # Projection is the last consumer of the padded activation.
+    del x_t
 
     # The current comfy-kitchen CUDA Sol/VSA kernel is BF16/head_dim=128. Fail loudly
     # instead of silently selecting the O(S^2) eager reference implementation.
@@ -277,7 +279,10 @@ def _vsa_attention(attn, x, rope_freqs, transformer_options, state: _VSAState):
             coarse_gate=gate_t,
         )
 
+    # The CUDA attention result owns its output; projections are no longer used.
+    del q, k, v, gate_t
     out = out_t[:, geo.untile_index]  # padded tile order -> native packed order
+    del out_t
     out = out.reshape(s, inner)
     state.calls += 1
     return attn.out_proj(out)
