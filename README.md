@@ -99,8 +99,10 @@ Our patch resolves this with an engineered two-tier attention layout:
 
 ## 📦 Requirements
 
-- **ComfyUI** (latest version with native MiniMax-H3 support).
-- **comfy-kitchen** installed with CUDA `sol_attn` support.
+> ⚠️ **Unmerged upstream dependency.** This node requires [ComfyUI PR #15958](https://github.com/comfyanonymous/ComfyUI/pull/15958) ("MiniMax-H3: support FastVideo VSA"), which adds the `to_gate_compress` module that `Ref2VAVSAGatePatch` transplants weights onto. That PR was **closed by its author (not merged)** on 2026-09-06, pending its own blocker, [comfy-kitchen#117](https://github.com/Comfy-Org/comfy-kitchen/issues/117). A stock ComfyUI install will **not** have `to_gate_compress` on its MiniMax H3 blocks, and this node will fail its startup checks until either that PR lands or you apply its diff manually. Similarly, the CUDA `sol_attn` kernel this node calls is not yet in the public `comfy-kitchen` PyPI release (0.2.31) — you need a CI build/artifact that includes it. Track both upstream issues before filing a "doesn't work on fresh install" report.
+
+- **ComfyUI** (latest version with native MiniMax-H3 support) **plus** the [#15958](https://github.com/comfyanonymous/ComfyUI/pull/15958) patch applied manually (see warning above — not yet merged upstream).
+- **comfy-kitchen** built with CUDA `sol_attn` support (not in the current public release — see warning above).
 - PyTorch 2.4+ and CUDA 12.1+.
 - NVIDIA GPU with 24GB VRAM (RTX 3090, RTX 4090, A5000, L40S, etc.).
 
@@ -125,7 +127,7 @@ Place the following files in your `ComfyUI/models/` directories:
 1. Clone or copy this repository into your ComfyUI `custom_nodes` directory:
    ```bash
    cd ComfyUI/custom_nodes
-   git clone https://github.com/Kablex/ComfyUI-Ref2VA-VSA
+   git clone https://github.com/Awehbelekker/ComfyUI-Ref2VA-VSA
    ```
 
 2. Copy the example character image into your ComfyUI input folder:

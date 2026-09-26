@@ -6,7 +6,7 @@ license = { text = "Apache-2.0" }
 dependencies = ["torch>=2.4.0", "safetensors>=0.4.3"]
 
 [project.urls]
-Repository = "https://github.com/Kablex/ComfyUI-Ref2VA-VSA"
+Repository = "https://github.com/Awehbelekker/ComfyUI-Ref2VA-VSA"
 
 [tool.comfy]
 PublisherId = "community"
